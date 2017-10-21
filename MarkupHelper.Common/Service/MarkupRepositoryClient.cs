@@ -61,6 +61,20 @@ namespace MarkupHelper.Common.Service
             }
         }
 
+        public string[] GetTagsList(UserModel user)
+        {
+            try
+            {
+                return MarkupRepository.GetTagsList(user);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Failed to call service");
+                _markupRepository = null;
+                throw;
+            }
+        }
+
         public Group GetUnmarkedGroup(UserModel user)
         {
             try

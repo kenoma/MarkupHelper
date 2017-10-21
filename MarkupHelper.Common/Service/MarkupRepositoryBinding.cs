@@ -10,7 +10,7 @@ namespace MarkupHelper.Common.Service
 {
     public static class MarkupRepositoryBinding
     {
-        public static readonly Binding MarkupRepository = new WebHttpBinding(WebHttpSecurityMode.None)
+        public static readonly Binding MarkupRepository = new NetTcpBinding(SecurityMode.None)
         {
             MaxReceivedMessageSize = int.MaxValue,
             ReaderQuotas =
@@ -19,7 +19,7 @@ namespace MarkupHelper.Common.Service
                     MaxStringContentLength = int.MaxValue
                 },
             OpenTimeout = TimeSpan.FromMinutes(3),
-            ReceiveTimeout = TimeSpan.FromHours(12),//session wide timeout
+            ReceiveTimeout = TimeSpan.FromHours(12),
             SendTimeout = TimeSpan.FromMinutes(3),
             CloseTimeout = TimeSpan.MaxValue
         };
