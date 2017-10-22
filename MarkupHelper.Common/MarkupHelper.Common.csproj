@@ -61,6 +61,7 @@
     <Compile Include="Domain\IAggregateRoot.cs" />
     <Compile Include="Domain\Model\Group.cs" />
     <Compile Include="Domain\Model\GroupMarkup.cs" />
+    <Compile Include="Domain\Model\GroupTag.cs" />
     <Compile Include="Domain\Model\UserModel.cs" />
     <Compile Include="Domain\Repository\IMarkupRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

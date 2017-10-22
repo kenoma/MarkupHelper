@@ -6,7 +6,17 @@
         xmlns:local="clr-namespace:MarkupHelper"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>                                                          
-                                                  
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <WebBrowser/>
+        <StackPanel Grid.Column="1" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Токен польльзователя"/>
+                <TextBox Text="{Binding }"
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>

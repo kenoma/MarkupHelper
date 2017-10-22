@@ -70,5 +70,17 @@ namespace MarkupHelper.Service {
                 this["TargetDatabase"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int TagLimitPerUser {
+            get {
+                return ((int)(this["TagLimitPerUser"]));
+            }
+            set {
+                this["TagLimitPerUser"] = value;
+            }
+        }
     }
 }
