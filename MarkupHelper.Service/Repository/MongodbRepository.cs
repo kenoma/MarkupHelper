@@ -109,6 +109,7 @@ namespace MarkupHelper.Service.Repository
 
         public UserModel GetUser(string token)
         {
+            LogOperation(token);
             var users = _database.GetCollection<UserModel>(nameof(UserModel));
 
             var user = users.AsQueryable().Single(z => z.Token == token);
@@ -126,6 +127,10 @@ namespace MarkupHelper.Service.Repository
             {
                 var rcollection = _database.GetCollection<GroupMarkup>(nameof(GroupMarkup));
                 var gcollection = _database.GetCollection<Group>(nameof(Group));
+                var tcollection = _database.GetCollection<GroupTag>(nameof(GroupTag));
+
+                if (!tcollection.AsQueryable().Any(z => z.Tag.Equals(tag)))
+                    return false;
 
                 if (!gcollection.AsQueryable().Any(z => z.Id == group.Id))
                     return false;
@@ -141,6 +146,23 @@ namespace MarkupHelper.Service.Repository
                 throw;
             }
             return true;
+        }
+
+        private void LogOperation(string token, [CallerMemberName]string caller = "")
+        {
+            try
+            {
+                var context = OperationContext.Current;
+                if (context == null)
+                    return;
+                var prop = context.IncomingMessageProperties;
+                var endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                _log.Verbose("[{Token}] User validation {Method} from {@EndpointData}", token, caller, endpoint);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, ex.Message);
+            }
         }
 
         private void LogOperation(UserModel user, [CallerMemberName]string caller = "")

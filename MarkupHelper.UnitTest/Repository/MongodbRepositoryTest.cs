@@ -192,6 +192,7 @@ namespace MarkupHelper.UnitTest.Repository
             var mark = Path.GetRandomFileName();
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<Group>(nameof(Group)).InsertMany(new[] { group });
+            _database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = mark });
             var repo = Create();
 
             repo.SubmitGroupTag(userTarget,group, mark).Should().BeTrue();

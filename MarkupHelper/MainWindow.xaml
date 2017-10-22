@@ -1,22 +1,54 @@
 ﻿<Window x:Class="MarkupHelper.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:prism="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
+        xmlns:markuphelper ="clr-namespace:MarkupHelper.ViewModel"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarkupHelper"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        xmlns:service="clr-namespace:MarkupHelper.Service"
+        Title="ПО для разметки групп ВК">
+    <Window.DataContext>
+        <markuphelper:MainWindowsViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <WebBrowser/>
-        <StackPanel Grid.Column="1" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Токен польльзователя"/>
-                <TextBox Text="{Binding }"
-            </StackPanel>
-        </StackPanel>
+        <WebBrowser service:WebBrowserUtility.BindableSource="{Binding GroupUrl}"/>
+        <Grid Grid.Column="1" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Name="UserAuth" Height="20"/>
+                <RowDefinition Name="Empty"/>
+                <RowDefinition Name="GetGroup" Height="22"/>
+                <RowDefinition Name="Empty2" Height="20"/>
+                <RowDefinition Name="GroupTag1" Height="21"/>
+                <RowDefinition Name="GroupTag2" Height="21"/>
+                <RowDefinition Name="GroupTag3" Height="21"/>
+                <RowDefinition Name="GroupTag4" Height="21"/>
+                <RowDefinition Name="Empty3" Height="20"/>
+                <RowDefinition Name="Submit" Height="22"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Токен польльзователя" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"/>
+            <TextBox Text="{Binding UserToken}"  Grid.Row="0" Grid.Column="1"/>
+            <Button Command="{Binding ValidateTokenCommand}" Content="Подключить"  Grid.Row="0" Grid.Column="2"/>
+            
+            <Button Command="{Binding GetUnAssignedGroupCommand}" Content="Получить новую группу"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding IsReady}"/>
+            <TextBlock Text="Тег группы 1:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag1}" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
+            <TextBlock Text="Тег группы 2:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag2}" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
+            <TextBlock Text="Тег группы 3:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag3}" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
+            <TextBlock Text="Тег группы 4:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag4}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
+            <Button Command="{Binding SubmitTagsCommand}" Content="Отправить теги"  Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding IsReady}"/>
+        </Grid>
+
     </Grid>
 </Window>

@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MarkupHelper" GeneratedClassName="config">
+  <Profiles />
+  <Settings>
+    <Setting Name="ServiceEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">net.tcp://localhost:8018/</Value>
+    </Setting>
+    <Setting Name="SeqServer" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:5341</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

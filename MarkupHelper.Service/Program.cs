@@ -1,6 +1,8 @@
-﻿using MarkupHelper.Common.Domain.Repository;
+﻿using MarkupHelper.Common.Domain.Model;
+using MarkupHelper.Common.Domain.Repository;
 using MarkupHelper.Common.Service;
 using MarkupHelper.Service.Repository;
+using MongoDB.Driver;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -22,8 +24,15 @@ namespace MarkupHelper.Service
         static void Main(string[] args)
         {
             var kernel = new StandardKernel(new Bindings());
-            var serviceAddress = new Uri(config.Default.ServiceEndpoint);
 
+            //var _database = kernel.Get<IMongoDatabase>();
+            //_database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(new UserModel { Id=Guid.NewGuid(), Token="B" });
+            //_database.GetCollection<Group>(nameof(Group)).InsertMany(new[] { new Group { Id=Guid.NewGuid(), VkId=2 } });
+            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "31a" });
+            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "41b" });
+            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "51c" });
+
+            var serviceAddress = new Uri(config.Default.ServiceEndpoint);
             using (ServiceHost serviceHost = new ServiceHost(typeof(MongodbRepository), serviceAddress))
             {
                 serviceHost.Description.Behaviors.Add(new NinjectBehavior(kernel, typeof(IMarkupRepository)));

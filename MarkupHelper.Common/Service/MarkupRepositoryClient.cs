@@ -35,7 +35,6 @@ namespace MarkupHelper.Common.Service
 
                         var channelFactory = new ChannelFactory<IMarkupRepository>(
                             MarkupRepositoryBinding.MarkupRepository, adress);
-                        channelFactory.Endpoint.Behaviors.Add(new WebHttpBehavior());
                         _markupRepository = channelFactory.CreateChannel();
                     }
                     catch (Exception e)
