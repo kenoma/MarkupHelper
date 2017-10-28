@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows;
 using Serilog.Core;
 using System.Collections.ObjectModel;
+using MarkupHelper.Common.Domain.Model;
 
 namespace MarkupHelper.ViewModel
 {
@@ -29,15 +30,19 @@ namespace MarkupHelper.ViewModel
         private string _tag2;
         private string _tag3;
         private string _tag4;
-        private Uri _groupUrl;
-        public ObservableCollection<string> Tags = new ObservableCollection<string>();
-
+        private string _groupUrl;
+        private int _userScore;
+        public ObservableCollection<string> Tags { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> Emotions { get; set; } = new ObservableCollection<string>();
+        private bool _isSubmitEnabled;
+        private Group _currentGroup;
+        private string _emo;
 
         public MainWindowsViewModel()
         {
             ValidateTokenCommand = new DelegateCommand(ValidateToken);
             GetUnAssignedGroupCommand = new DelegateCommand(GetUnAssignedGroup);
-            SubmitTagsCommand = new DelegateCommand(SubmitTags, () => !string.IsNullOrWhiteSpace(Tag1) & !string.IsNullOrWhiteSpace(Tag2) & !string.IsNullOrWhiteSpace(Tag3) & !string.IsNullOrWhiteSpace(Tag4));
+            SubmitTagsCommand = new DelegateCommand(SubmitTags);
             _logger = new LoggerConfiguration()
                 .Enrich.WithMachineName()
                 .Enrich.WithEnvironmentUserName()
@@ -50,21 +55,58 @@ namespace MarkupHelper.ViewModel
 
         private void SubmitTags()
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (_user == null)
+                    return;
+                if (CurrentGroup == null)
+                    return;
+
+                if (string.IsNullOrWhiteSpace(Tag1) ||
+                    string.IsNullOrWhiteSpace(Tag2) ||
+                    string.IsNullOrWhiteSpace(Tag3) ||
+                    string.IsNullOrWhiteSpace(Tag4))
+                    return;
+
+                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag1);
+                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag2);
+                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag3);
+                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag4);
+                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Emo);
+
+                CurrentGroup = null;
+                GroupUrl = "about:blank";
+                Tag1 = null;
+                Tag2 = null;
+                Tag3 = null;
+                Tag4 = null;
+                Emo = null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, ex.Message);
+                MessageBox.Show("Не удалось отправить результаты");
+            }
         }
 
         private void GetUnAssignedGroup()
         {
             try
             {
-                GroupUrl = new Uri("about:blank");
+                GroupUrl = "about:blank";
                 var unmarked = _markupRepositoryClient.GetUnmarkedGroup(_user);
-                GroupUrl = new Uri($"https://m.vk.com/club{unmarked.VkId}");
+                GroupUrl = $"https://m.vk.com/club{unmarked.VkId}";
+                CurrentGroup = unmarked;
+                Tag1 = null;
+                Tag2 = null;
+                Tag3 = null;
+                Tag4 = null;
+                Emo = null;
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, ex.Message);
-                MessageBox.Show("Не удалось отобразить группу.");
+                MessageBox.Show("Не удалось получить новую группу.");
             }
         }
 
@@ -74,11 +116,19 @@ namespace MarkupHelper.ViewModel
             {
                 var user = _markupRepositoryClient.GetUser(_userToken);
                 _user = user;
-                var tags = _markupRepositoryClient.GetTagsList(_user);
+                if (_user == null)
+                    return;
                 var rnd = new Random(Environment.TickCount);
-                foreach (var tag in tags.OrderBy(z => rnd.NextDouble()))
+                UserScore = _markupRepositoryClient.CalculateUserScore(_user);
+                var tags = _markupRepositoryClient.GetTagsList(_user);
+                Tags.Clear();
+                foreach (var tag in tags.OrderBy(z => z.FirstOrDefault()).ThenBy(z => rnd.NextDouble()))
                     Tags.Add(tag);
-                GroupUrl = new Uri("https://m.vk.com/");
+                Emotions.Clear();
+                foreach (var tag in GroupTag.PredefinedEmotions)
+                    Emotions.Add(tag);
+                
+                GroupUrl = "https://m.vk.com/";
                 IsReady = true;
             }
             catch (Exception ex)
@@ -90,11 +140,69 @@ namespace MarkupHelper.ViewModel
 
         public bool IsReady { get => _isReady; set { SetProperty(ref _isReady, value); } }
         public string UserToken { get => _userToken; set { SetProperty(ref _userToken, value); } }
-        public string Tag1 { get => _tag1; set => SetProperty(ref _tag1, value); }
-        public string Tag2 { get => _tag2; set => SetProperty(ref _tag2, value); }
-        public string Tag3 { get => _tag3; set => SetProperty(ref _tag3, value); }
-        public string Tag4 { get => _tag4; set => SetProperty(ref _tag4, value); }
-        
-        public Uri GroupUrl { get => _groupUrl; set => SetProperty(ref _groupUrl, value); }
+
+        public string Tag1
+        {
+            get => _tag1;
+            set
+            {
+                SetProperty(ref _tag1, value);
+                UpdateSubmitEnable();
+            }
+        }
+
+        public string Tag2
+        {
+            get => _tag2;
+            set
+            {
+                SetProperty(ref _tag2, value);
+                UpdateSubmitEnable();
+            }
+        }
+
+        public string Tag3
+        {
+            get => _tag3;
+            set
+            {
+                SetProperty(ref _tag3, value);
+                UpdateSubmitEnable();
+            }
+        }
+
+        public string Tag4
+        {
+            get => _tag4;
+            set
+            {
+                SetProperty(ref _tag4, value);
+                UpdateSubmitEnable();
+            }
+        }
+
+        public string Emo
+        {
+            get => _emo;
+            set
+            {
+                SetProperty(ref _emo, value);
+                UpdateSubmitEnable();
+            }
+        }
+
+        private void UpdateSubmitEnable()
+        {
+            IsSubmitEnabled = CurrentGroup != null && !string.IsNullOrWhiteSpace(Tag1) && !string.IsNullOrWhiteSpace(Tag2) && !string.IsNullOrWhiteSpace(Tag3) && !string.IsNullOrWhiteSpace(Tag4) && !string.IsNullOrWhiteSpace(Emo)
+                && Tag1 != Tag2 && Tag1 != Tag3 && Tag1 != Tag4 && Tag1 != Emo
+                && Tag2 != Tag3 && Tag2 != Tag4 && Tag2 != Emo
+                && Tag3 != Tag4 && Tag3 != Emo
+                && Tag4 != Emo;
+        }
+
+        public string GroupUrl { get => _groupUrl; set => SetProperty(ref _groupUrl, value); }
+        public bool IsSubmitEnabled { get => _isSubmitEnabled; set => SetProperty(ref _isSubmitEnabled, value); }
+        public int UserScore { get => _userScore; set => SetProperty(ref _userScore, value); }
+        public Group CurrentGroup { get => _currentGroup; set => SetProperty(ref _currentGroup, value); }
     }
 }

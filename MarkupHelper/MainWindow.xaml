@@ -6,48 +6,77 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarkupHelper"
         xmlns:service="clr-namespace:MarkupHelper.Service"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         Title="ПО для разметки групп ВК">
     <Window.DataContext>
         <markuphelper:MainWindowsViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="800*"/>
+            <ColumnDefinition Width="430"/>
         </Grid.ColumnDefinitions>
-        <WebBrowser service:WebBrowserUtility.BindableSource="{Binding GroupUrl}"/>
+        
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBox HorizontalAlignment="Center" FontWeight="Black" FontSize="15" Margin="10" IsReadOnly="True" Grid.Row="0">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Text" Value="{Binding GroupUrl}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentGroup}" Value="{x:Null}">
+                                <Setter Property="Text" Value="Нет группы для отображения"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <Border BorderThickness="1" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="1">
+                <cefSharp:ChromiumWebBrowser Address="{Binding GroupUrl}"/>
+            </Border>
+        </Grid>
         <Grid Grid.Column="1" Margin="20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="120"/>
-                <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Name="UserAuth" Height="20"/>
-                <RowDefinition Name="Empty"/>
-                <RowDefinition Name="GetGroup" Height="22"/>
-                <RowDefinition Name="Empty2" Height="20"/>
-                <RowDefinition Name="GroupTag1" Height="21"/>
-                <RowDefinition Name="GroupTag2" Height="21"/>
-                <RowDefinition Name="GroupTag3" Height="21"/>
-                <RowDefinition Name="GroupTag4" Height="21"/>
-                <RowDefinition Name="Empty3" Height="20"/>
-                <RowDefinition Name="Submit" Height="22"/>
+                <RowDefinition Name="UserAuth" Height="40"/>
+                <RowDefinition Name="Empty" Height="40"/>
+                <RowDefinition Name="GetGroup" Height="40"/>
+                <RowDefinition Name="Empty2" Height="40"/>
+                <RowDefinition Name="GroupTag1" Height="41"/>
+                <RowDefinition Name="GroupTag2" Height="41"/>
+                <RowDefinition Name="GroupTag3" Height="41"/>
+                <RowDefinition Name="GroupTag4" Height="41"/>
+                <RowDefinition Name="Emotions" Height="41"/>
+                <RowDefinition Name="Empty3" Height="40"/>
+                <RowDefinition Name="Submit" Height="40"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Токен польльзователя" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"/>
-            <TextBox Text="{Binding UserToken}"  Grid.Row="0" Grid.Column="1"/>
-            <Button Command="{Binding ValidateTokenCommand}" Content="Подключить"  Grid.Row="0" Grid.Column="2"/>
-            
+            <TextBlock Text="Токен польльзователя" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBox Text="{Binding UserToken}" FontSize="6" TextAlignment="Center" VerticalAlignment="Center" Padding="4" VerticalContentAlignment="Center"  Grid.Row="0" Grid.Column="1"/>
+            <Button Command="{Binding ValidateTokenCommand}" Content="Подключить"  Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" FontSize="10">
+                <Run Text="Score: "/>
+                <Run Text="{Binding UserScore}"/>
+            </TextBlock>
             <Button Command="{Binding GetUnAssignedGroupCommand}" Content="Получить новую группу"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding IsReady}"/>
-            <TextBlock Text="Тег группы 1:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center"/>
+            <TextBlock Text="Тег группы 1:" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center"/>
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag1}" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
-            <TextBlock Text="Тег группы 2:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
+            <TextBlock Text="Тег группы 2:" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag2}" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
-            <TextBlock Text="Тег группы 3:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
+            <TextBlock Text="Тег группы 3:" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag3}" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
-            <TextBlock Text="Тег группы 4:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center"/>
+            <TextBlock Text="Тег группы 4:" VerticalAlignment="Center" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center"/>
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag4}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
-            <Button Command="{Binding SubmitTagsCommand}" Content="Отправить теги"  Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding IsReady}"/>
+            <TextBlock Text="Эмоция:" Grid.Row="8" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding Emotions}" SelectedItem="{Binding Emo}" Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
+            <Button Command="{Binding SubmitTagsCommand}" IsEnabled="{Binding IsSubmitEnabled}" Content="Отправить теги"  Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3"/>
         </Grid>
 
     </Grid>

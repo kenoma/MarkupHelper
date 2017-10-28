@@ -92,6 +92,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>config.settings</DependentUpon>
     </Compile>
+    <Compile Include="ManualTasks.cs" />
     <Compile Include="NinjectBehavior.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -20,6 +20,7 @@ namespace MarkupHelper.Service
             Bind<MongoClient>().ToSelf().WithConstructorArgument("connectionString", config.Default.MongodbConnectionString);
             Bind<IMongoDatabase>().ToMethod(ctx => ctx.Kernel.Get<MongoClient>().GetDatabase(config.Default.TargetDatabase));
             Bind<IMarkupRepository>().To<MongodbRepository>();
+            Bind<ManualTasks>().ToSelf();
             Bind<ILogger>().ToMethod(z => new LoggerConfiguration()
                 .Enrich.WithProcessName()
                 .Enrich.WithProcessId()

@@ -14,7 +14,7 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
 
-[assembly:InternalsVisibleTo("MarkupHelper.UnitTest")]
+[assembly: InternalsVisibleTo("MarkupHelper.UnitTest")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace MarkupHelper.Service
 {
@@ -25,26 +25,51 @@ namespace MarkupHelper.Service
         {
             var kernel = new StandardKernel(new Bindings());
 
-            //var _database = kernel.Get<IMongoDatabase>();
-            //_database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(new UserModel { Id=Guid.NewGuid(), Token="B" });
-            //_database.GetCollection<Group>(nameof(Group)).InsertMany(new[] { new Group { Id=Guid.NewGuid(), VkId=2 } });
-            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "31a" });
-            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "41b" });
-            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "51c" });
-
-            var serviceAddress = new Uri(config.Default.ServiceEndpoint);
-            using (ServiceHost serviceHost = new ServiceHost(typeof(MongodbRepository), serviceAddress))
+            var manual = kernel.Get<ManualTasks>();
+            Console.WriteLine("Enter cmd:");
+            var cmd = Console.ReadLine();
+            while (!string.IsNullOrWhiteSpace(cmd))
             {
-                serviceHost.Description.Behaviors.Add(new NinjectBehavior(kernel, typeof(IMarkupRepository)));
-                var endpoint = serviceHost.AddServiceEndpoint(
-                    typeof(IMarkupRepository),
-                    MarkupRepositoryBinding.MarkupRepository,
-                    serviceAddress);
+                switch (cmd)
+                {
+                    case "start":
+                        var serviceAddress = new Uri(config.Default.ServiceEndpoint);
+                        using (ServiceHost serviceHost = new ServiceHost(typeof(MongodbRepository), serviceAddress))
+                        {
+                            serviceHost.Description.Behaviors.Add(new NinjectBehavior(kernel, typeof(IMarkupRepository)));
+                            var endpoint = serviceHost.AddServiceEndpoint(
+                                typeof(IMarkupRepository),
+                                MarkupRepositoryBinding.MarkupRepository,
+                                serviceAddress);
 
-                serviceHost.Open();
-                Console.WriteLine("Press any key to close app");
-                Console.ReadLine();
+                            serviceHost.Open();
+                            Console.WriteLine("Press any key to close app");
+                            Console.ReadLine();
+                        }
+                        break;
+                    case "lcat":
+                        Console.Write("Enter categories filename:");
+                        var fname = Console.ReadLine();
+                        manual.LoadCategories(fname);
+                        break;
+                    case "lgps":
+                        Console.Write("Enter groups filename:");
+                        fname = Console.ReadLine();
+                        Console.Write("Enter groups count:");
+                        var count = Console.ReadLine();
+                        manual.LoadGroups(fname, int.TryParse(count, out int take) ? take : 0);
+                        break;
+                    case "cuser":
+                        var token = manual.CreateNewUser();
+                        Console.WriteLine($"New user token is {token}");
+                        break;
+                }
+                Console.WriteLine("Enter cmd:");
+                cmd = Console.ReadLine();
             }
+
+            
+
         }
     }
 }

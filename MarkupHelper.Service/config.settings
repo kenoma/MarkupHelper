@@ -15,7 +15,7 @@
       <Value Profile="(Default)">VkontakteMarkup</Value>
     </Setting>
     <Setting Name="TagLimitPerUser" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">4</Value>
+      <Value Profile="(Default)">5</Value>
     </Setting>
   </Settings>
 </SettingsFile>
