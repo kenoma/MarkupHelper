@@ -88,17 +88,24 @@ namespace MarkupHelper.Service.Repository
 
             try
             {
+
                 var rcollection = _database.GetCollection<GroupMarkup>(nameof(GroupMarkup));
                 var gcollection = _database.GetCollection<Group>(nameof(Group));
 
-                var userGroups = (from mg in rcollection.AsQueryable()
+                var qrbl = rcollection.AsQueryable();
+                var forbiddenGroups = new HashSet<Guid>(from mg in qrbl
+                                                        group mg by mg.GroupId into g
+                                                        where g.Count() > config.Default.GroupMarkupsLimit
+                                                        select g.Key);
+
+                var userGroups = (from mg in qrbl
                                   where mg.UserId == user.Id
                                   select mg.GroupId).Distinct().ToArray();
 
                 var allGroups = (from a in gcollection.AsQueryable()
                                  select a).ToArray();
 
-                return allGroups.FirstOrDefault(z => !userGroups.Contains(z.Id));
+                return allGroups.Where(z => !forbiddenGroups.Contains(z.Id)).FirstOrDefault(z => !userGroups.Contains(z.Id));
             }
             catch (Exception ex)
             {

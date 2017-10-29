@@ -82,5 +82,17 @@ namespace MarkupHelper.Service {
                 this["TagLimitPerUser"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int GroupMarkupsLimit {
+            get {
+                return ((int)(this["GroupMarkupsLimit"]));
+            }
+            set {
+                this["GroupMarkupsLimit"] = value;
+            }
+        }
     }
 }
