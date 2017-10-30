@@ -15,10 +15,10 @@
       <Value Profile="(Default)">VkontakteMarkup</Value>
     </Setting>
     <Setting Name="TagLimitPerUser" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">5</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="GroupMarkupsLimit" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">50</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
   </Settings>
 </SettingsFile>

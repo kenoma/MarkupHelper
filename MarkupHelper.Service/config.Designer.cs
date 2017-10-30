@@ -73,7 +73,7 @@ namespace MarkupHelper.Service {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int TagLimitPerUser {
             get {
                 return ((int)(this["TagLimitPerUser"]));
@@ -85,7 +85,7 @@ namespace MarkupHelper.Service {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
         public int GroupMarkupsLimit {
             get {
                 return ((int)(this["GroupMarkupsLimit"]));

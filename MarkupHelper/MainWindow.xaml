@@ -70,12 +70,12 @@
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag1}" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
             <TextBlock Text="Тег группы 2:" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag2}" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
-            <TextBlock Text="Тег группы 3:" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
+            <!--<TextBlock Text="Тег группы 3:" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
             <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag3}" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
             <TextBlock Text="Тег группы 4:" VerticalAlignment="Center" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center"/>
-            <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag4}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
-            <TextBlock Text="Эмоция:" Grid.Row="8" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center"/>
-            <ComboBox ItemsSource="{Binding Emotions}" SelectedItem="{Binding Emo}" Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
+            <ComboBox ItemsSource="{Binding Tags}" SelectedItem="{Binding Tag4}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>-->
+            <TextBlock Text="Эмоция:" Grid.Row="7" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding Emotions}" SelectedItem="{Binding Emo}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsReady}"/>
             <Button Command="{Binding SubmitTagsCommand}" IsEnabled="{Binding IsSubmitEnabled}" Content="Отправить теги"  Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3"/>
         </Grid>
 

@@ -28,8 +28,6 @@ namespace MarkupHelper.ViewModel
         private bool _isReady;
         private string _tag1;
         private string _tag2;
-        private string _tag3;
-        private string _tag4;
         private string _groupUrl;
         private int _userScore;
         public ObservableCollection<string> Tags { get; set; } = new ObservableCollection<string>();
@@ -63,23 +61,17 @@ namespace MarkupHelper.ViewModel
                     return;
 
                 if (string.IsNullOrWhiteSpace(Tag1) ||
-                    string.IsNullOrWhiteSpace(Tag2) ||
-                    string.IsNullOrWhiteSpace(Tag3) ||
-                    string.IsNullOrWhiteSpace(Tag4))
+                    string.IsNullOrWhiteSpace(Tag2))
                     return;
 
                 _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag1);
                 _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag2);
-                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag3);
-                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag4);
                 _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Emo);
 
                 CurrentGroup = null;
                 GroupUrl = "about:blank";
                 Tag1 = null;
                 Tag2 = null;
-                Tag3 = null;
-                Tag4 = null;
                 Emo = null;
             }
             catch (Exception ex)
@@ -99,8 +91,6 @@ namespace MarkupHelper.ViewModel
                 CurrentGroup = unmarked;
                 Tag1 = null;
                 Tag2 = null;
-                Tag3 = null;
-                Tag4 = null;
                 Emo = null;
             }
             catch (Exception ex)
@@ -122,7 +112,7 @@ namespace MarkupHelper.ViewModel
                 UserScore = _markupRepositoryClient.CalculateUserScore(_user);
                 var tags = _markupRepositoryClient.GetTagsList(_user);
                 Tags.Clear();
-                foreach (var tag in tags.OrderBy(z => z.FirstOrDefault()).ThenBy(z => rnd.NextDouble()))
+                foreach (var tag in tags.Except(GroupTag.PredefinedEmotions).OrderBy(z => z))
                     Tags.Add(tag);
                 Emotions.Clear();
                 foreach (var tag in GroupTag.PredefinedEmotions)
@@ -161,26 +151,6 @@ namespace MarkupHelper.ViewModel
             }
         }
 
-        public string Tag3
-        {
-            get => _tag3;
-            set
-            {
-                SetProperty(ref _tag3, value);
-                UpdateSubmitEnable();
-            }
-        }
-
-        public string Tag4
-        {
-            get => _tag4;
-            set
-            {
-                SetProperty(ref _tag4, value);
-                UpdateSubmitEnable();
-            }
-        }
-
         public string Emo
         {
             get => _emo;
@@ -193,11 +163,8 @@ namespace MarkupHelper.ViewModel
 
         private void UpdateSubmitEnable()
         {
-            IsSubmitEnabled = CurrentGroup != null && !string.IsNullOrWhiteSpace(Tag1) && !string.IsNullOrWhiteSpace(Tag2) && !string.IsNullOrWhiteSpace(Tag3) && !string.IsNullOrWhiteSpace(Tag4) && !string.IsNullOrWhiteSpace(Emo)
-                && Tag1 != Tag2 && Tag1 != Tag3 && Tag1 != Tag4 && Tag1 != Emo
-                && Tag2 != Tag3 && Tag2 != Tag4 && Tag2 != Emo
-                && Tag3 != Tag4 && Tag3 != Emo
-                && Tag4 != Emo;
+            IsSubmitEnabled = CurrentGroup != null && !string.IsNullOrWhiteSpace(Tag1) && !string.IsNullOrWhiteSpace(Tag2) && !string.IsNullOrWhiteSpace(Emo)
+                && Tag1 != Tag2 && Tag1 != Emo && Tag2 != Emo;
         }
 
         public string GroupUrl { get => _groupUrl; set => SetProperty(ref _groupUrl, value); }
