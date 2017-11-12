@@ -112,8 +112,14 @@ namespace MarkupHelper.ViewModel
                 UserScore = _markupRepositoryClient.CalculateUserScore(_user);
                 var tags = _markupRepositoryClient.GetTagsList(_user);
                 Tags.Clear();
-                foreach (var tag in tags.Except(GroupTag.PredefinedEmotions).OrderBy(z => z))
+                var arr = tags.Except(GroupTag.PredefinedEmotions)
+                    .GroupBy(z => z[0])
+                    .OrderBy(z => rnd.NextDouble())
+                    .SelectMany(z => z.OrderBy(x => rnd.NextDouble()));
+
+                foreach (var tag in arr)
                     Tags.Add(tag);
+
                 Emotions.Clear();
                 foreach (var tag in GroupTag.PredefinedEmotions)
                     Emotions.Add(tag);

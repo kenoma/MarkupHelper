@@ -10,7 +10,16 @@ namespace MarkupHelper.Common.Domain.Model
     [DataContract]
     public class GroupTag : IAggregateRoot
     {
-        public static string[] PredefinedEmotions = new string[] { "Радость", "Удивление", "Печаль", "Гнев", "Отвращение", "Презрение", "Страх" };
+        public static string[] PredefinedEmotions = new string[] {
+            "Радость",
+            "Удивление",
+            "Печаль",
+            "Гнев",
+            "Отвращение",
+            "Презрение",
+            "Страх",
+            "Интерес"
+        };
 
         [DataMember]
         public Guid Id { get; set; }
