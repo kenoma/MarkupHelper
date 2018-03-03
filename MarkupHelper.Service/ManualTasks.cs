@@ -26,12 +26,12 @@ namespace MarkupHelper.Service
                 return;
             }
 
-            foreach (var line in File.ReadAllLines(filename).Union(GroupTag.PredefinedEmotions))
+            foreach (var line in File.ReadAllLines(filename).Union(ContentTag.PredefinedEmotions))
             {
-                if (!_database.GetCollection<GroupTag>(nameof(GroupTag)).AsQueryable().Any(z => z.Tag == line))
+                if (!_database.GetCollection<ContentTag>(nameof(ContentTag)).AsQueryable().Any(z => z.Tag == line))
                 {
-                    var tmp = new GroupTag { Id = Guid.NewGuid(), Tag = line };
-                    _database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(tmp);
+                    var tmp = new ContentTag { Id = Guid.NewGuid(), Tag = line };
+                    _database.GetCollection<ContentTag>(nameof(ContentTag)).InsertOne(tmp);
                     Console.WriteLine($"Inserted tag {tmp.Id}:{tmp.Tag}");
                 }
                 else
@@ -58,13 +58,13 @@ namespace MarkupHelper.Service
             foreach (var line in File.ReadAllLines(fname))
                 if (take > 0 && int.TryParse(line, out int vkId))
                 {
-                    var collection = _database.GetCollection<Group>(nameof(Group));
+                    var collection = _database.GetCollection<Content>(nameof(Content));
                     if (!collection.AsQueryable().Any(z => z.VkId == vkId))
                     {
-                        var tmp = new Group { Id = Guid.NewGuid(), VkId = vkId };
+                        var tmp = new Content { Id = Guid.NewGuid(), VkContentId = vkId };
                         collection.InsertOne(tmp);
                         take--;
-                        Console.WriteLine($"Inserted group {tmp.Id}:{tmp.VkId}. Remains {take}");
+                        Console.WriteLine($"Inserted group {tmp.Id}:{tmp.VkContentId}. Remains {take}");
                     }
                     else
                     {

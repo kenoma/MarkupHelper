@@ -74,11 +74,11 @@ namespace MarkupHelper.Common.Service
             }
         }
 
-        public Group GetUnmarkedGroup(UserModel user)
+        public Content GetUnmarkedContent(UserModel user)
         {
             try
             {
-                return MarkupRepository.GetUnmarkedGroup(user);
+                return MarkupRepository.GetUnmarkedContent(user);
             }
             catch (Exception ex)
             {
@@ -102,11 +102,11 @@ namespace MarkupHelper.Common.Service
             }
         }
 
-        public bool SubmitGroupTag(UserModel user, Group group, string tag)
+        public bool SubmitContentTag(UserModel user, Content group, string tag)
         {
             try
             {
-                return MarkupRepository.SubmitGroupTag(user, group, tag);
+                return MarkupRepository.SubmitContentTag(user, group, tag);
             }
             catch (Exception ex)
             {

@@ -20,10 +20,10 @@ namespace MarkupHelper.Common.Domain.Repository
         string[] GetTagsList(UserModel user);
 
         [OperationContract]
-        Group GetUnmarkedGroup(UserModel user);
+        Content GetUnmarkedContent(UserModel user);
 
         [OperationContract]
-        bool SubmitGroupTag(UserModel user, Group group, string tag);
+        bool SubmitContentTag(UserModel user, Content group, string tag);
 
         [OperationContract]
         int CalculateUserScore(UserModel user);

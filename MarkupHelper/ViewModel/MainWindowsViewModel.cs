@@ -33,7 +33,7 @@ namespace MarkupHelper.ViewModel
         public ObservableCollection<string> Tags { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<string> Emotions { get; set; } = new ObservableCollection<string>();
         private bool _isSubmitEnabled;
-        private Group _currentGroup;
+        private Content _currentGroup;
         private string _emo;
 
         public MainWindowsViewModel()
@@ -64,9 +64,9 @@ namespace MarkupHelper.ViewModel
                     string.IsNullOrWhiteSpace(Tag2))
                     return;
 
-                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag1);
-                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Tag2);
-                _markupRepositoryClient.SubmitGroupTag(_user, CurrentGroup, Emo);
+                _markupRepositoryClient.SubmitContentTag(_user, CurrentGroup, Tag1);
+                _markupRepositoryClient.SubmitContentTag(_user, CurrentGroup, Tag2);
+                _markupRepositoryClient.SubmitContentTag(_user, CurrentGroup, Emo);
 
                 CurrentGroup = null;
                 GroupUrl = "about:blank";
@@ -86,8 +86,8 @@ namespace MarkupHelper.ViewModel
             try
             {
                 GroupUrl = "about:blank";
-                var unmarked = _markupRepositoryClient.GetUnmarkedGroup(_user);
-                GroupUrl = $"https://m.vk.com/club{unmarked.VkId}";
+                var unmarked = _markupRepositoryClient.GetUnmarkedContent(_user);
+                GroupUrl = $"https://m.vk.com/club{unmarked.VkContentId}";
                 CurrentGroup = unmarked;
                 Tag1 = null;
                 Tag2 = null;
@@ -112,7 +112,7 @@ namespace MarkupHelper.ViewModel
                 UserScore = _markupRepositoryClient.CalculateUserScore(_user);
                 var tags = _markupRepositoryClient.GetTagsList(_user);
                 Tags.Clear();
-                var arr = tags.Except(GroupTag.PredefinedEmotions)
+                var arr = tags.Except(ContentTag.PredefinedEmotions)
                     .GroupBy(z => z[0])
                     .OrderBy(z => rnd.NextDouble())
                     .SelectMany(z => z.OrderBy(x => rnd.NextDouble()));
@@ -121,7 +121,7 @@ namespace MarkupHelper.ViewModel
                     Tags.Add(tag);
 
                 Emotions.Clear();
-                foreach (var tag in GroupTag.PredefinedEmotions)
+                foreach (var tag in ContentTag.PredefinedEmotions)
                     Emotions.Add(tag);
                 
                 GroupUrl = "https://m.vk.com/";
@@ -176,6 +176,6 @@ namespace MarkupHelper.ViewModel
         public string GroupUrl { get => _groupUrl; set => SetProperty(ref _groupUrl, value); }
         public bool IsSubmitEnabled { get => _isSubmitEnabled; set => SetProperty(ref _isSubmitEnabled, value); }
         public int UserScore { get => _userScore; set => SetProperty(ref _userScore, value); }
-        public Group CurrentGroup { get => _currentGroup; set => SetProperty(ref _currentGroup, value); }
+        public Content CurrentGroup { get => _currentGroup; set => SetProperty(ref _currentGroup, value); }
     }
 }

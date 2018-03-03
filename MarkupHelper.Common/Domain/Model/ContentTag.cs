@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MarkupHelper.Common.Domain.Model
 {
     [DataContract]
-    public class GroupTag : IAggregateRoot
+    public class ContentTag : IAggregateRoot
     {
         public static string[] PredefinedEmotions = new string[] {
             "Радость",

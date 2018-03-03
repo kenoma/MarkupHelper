@@ -35,15 +35,15 @@ namespace MarkupHelper.Service.Repository
 
             try
             {
-                var rcollection = _database.GetCollection<GroupMarkup>(nameof(GroupMarkup));
+                var rcollection = _database.GetCollection<ContentMarkup>(nameof(ContentMarkup));
 
                 var usertags = from mg in rcollection.AsQueryable()
                                where mg.UserId == user.Id
-                               select new { T = mg.GroupTag, G = mg.GroupId };
+                               select new { T = mg.ContentTag, G = mg.GroupId };
 
                 var nonusertags = from mg in rcollection.AsQueryable()
                                   where mg.UserId != user.Id
-                                  select new { T = mg.GroupTag, G = mg.GroupId };
+                                  select new { T = mg.ContentTag, G = mg.GroupId };
 
                 var union = usertags.ToArray().Intersect(nonusertags.ToArray());
 
@@ -65,7 +65,7 @@ namespace MarkupHelper.Service.Repository
 
             try
             {
-                var rcollection = _database.GetCollection<GroupTag>(nameof(GroupTag));
+                var rcollection = _database.GetCollection<ContentTag>(nameof(ContentTag));
 
                 var allTags = from a in rcollection.AsQueryable()
                               select a.Tag;
@@ -79,7 +79,7 @@ namespace MarkupHelper.Service.Repository
             }
         }
 
-        public Group GetUnmarkedGroup(UserModel user)
+        public Content GetUnmarkedContent(UserModel user)
         {
             LogOperation(user);
 
@@ -89,8 +89,8 @@ namespace MarkupHelper.Service.Repository
             try
             {
 
-                var rcollection = _database.GetCollection<GroupMarkup>(nameof(GroupMarkup));
-                var gcollection = _database.GetCollection<Group>(nameof(Group));
+                var rcollection = _database.GetCollection<ContentMarkup>(nameof(ContentMarkup));
+                var gcollection = _database.GetCollection<Content>(nameof(Content));
 
                 var qrbl = rcollection.AsQueryable();
                 var forbiddenGroups = new HashSet<Guid>(from mg in qrbl
@@ -123,7 +123,7 @@ namespace MarkupHelper.Service.Repository
             return user;
         }
 
-        public bool SubmitGroupTag(UserModel user, Group group, string tag)
+        public bool SubmitContentTag(UserModel user, Content group, string tag)
         {
             LogOperation(user);
 
@@ -132,9 +132,9 @@ namespace MarkupHelper.Service.Repository
 
             try
             {
-                var rcollection = _database.GetCollection<GroupMarkup>(nameof(GroupMarkup));
-                var gcollection = _database.GetCollection<Group>(nameof(Group));
-                var tcollection = _database.GetCollection<GroupTag>(nameof(GroupTag));
+                var rcollection = _database.GetCollection<ContentMarkup>(nameof(ContentMarkup));
+                var gcollection = _database.GetCollection<Content>(nameof(Content));
+                var tcollection = _database.GetCollection<ContentTag>(nameof(ContentTag));
 
                 if (!tcollection.AsQueryable().Any(z => z.Tag.Equals(tag)))
                     return false;
@@ -145,7 +145,7 @@ namespace MarkupHelper.Service.Repository
                 if (rcollection.AsQueryable().Count(mg => mg.UserId == user.Id && mg.GroupId == group.Id) > config.Default.TagLimitPerUser)
                     return false;
 
-                rcollection.InsertOne(new GroupMarkup { Id = Guid.NewGuid(), GroupId = group.Id, UserId = user.Id, GroupTag = tag, Timestamp = DateTime.UtcNow });
+                rcollection.InsertOne(new ContentMarkup { Id = Guid.NewGuid(), GroupId = group.Id, UserId = user.Id, ContentTag = tag, Timestamp = DateTime.UtcNow });
             }
             catch (Exception ex)
             {

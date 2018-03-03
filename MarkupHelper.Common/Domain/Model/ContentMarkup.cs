@@ -8,12 +8,21 @@ using System.Threading.Tasks;
 namespace MarkupHelper.Common.Domain.Model
 {
     [DataContract]
-    public class Group : IAggregateRoot
+    public class ContentMarkup : IAggregateRoot
     {
         [DataMember]
         public Guid Id { get; set; }
 
         [DataMember]
-        public int VkId { get; set; }
+        public DateTime Timestamp { get; set; }
+
+        [DataMember]
+        public string ContentTag { get; set; }
+
+        [DataMember]
+        public Guid UserId { get; set; }
+
+        [DataMember]
+        public Guid GroupId { get; set; }
     }
 }
