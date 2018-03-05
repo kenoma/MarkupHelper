@@ -56,12 +56,12 @@ namespace MarkupHelper.Service
             }
 
             foreach (var line in File.ReadAllLines(fname))
-                if (take > 0 && int.TryParse(line, out int vkId))
+                if (take > 0)
                 {
                     var collection = _database.GetCollection<Content>(nameof(Content));
-                    if (!collection.AsQueryable().Any(z => z.VkId == vkId))
+                    if (!collection.AsQueryable().Any(z => z.VkContentId == line))
                     {
-                        var tmp = new Content { Id = Guid.NewGuid(), VkContentId = vkId };
+                        var tmp = new Content { Id = Guid.NewGuid(), VkContentId = line };
                         collection.InsertOne(tmp);
                         take--;
                         Console.WriteLine($"Inserted group {tmp.Id}:{tmp.VkContentId}. Remains {take}");

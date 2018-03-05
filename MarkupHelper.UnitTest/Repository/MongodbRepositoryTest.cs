@@ -136,10 +136,10 @@ namespace MarkupHelper.UnitTest.Repository
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
             var groupRecords = new List<Content>
             {
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount }
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() }
             };
             var markRecords = new List<ContentMarkup>
             {
@@ -163,10 +163,10 @@ namespace MarkupHelper.UnitTest.Repository
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
             var groupRecords = new List<Content>
             {
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount }
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
+                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() }
             };
             var markRecords = new List<ContentMarkup>
             {
@@ -188,7 +188,7 @@ namespace MarkupHelper.UnitTest.Repository
         public void SubmitGroupTag_Accept()
         {
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
-            var group = new Content { Id = Guid.NewGuid(), VkContentId = Environment.TickCount };
+            var group = new Content { Id = Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() };
             var mark = Path.GetRandomFileName();
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<Content>(nameof(Content)).InsertMany(new[] { group });
@@ -205,7 +205,7 @@ namespace MarkupHelper.UnitTest.Repository
         public void SubmitGroupTag_NoGroup_false()
         {
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
-            var group = new Content { Id = Guid.NewGuid(), VkContentId = Environment.TickCount };
+            var group = new Content { Id = Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() };
             var mark = Path.GetRandomFileName();
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             var repo = Create();

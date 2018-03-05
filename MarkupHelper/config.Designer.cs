@@ -25,7 +25,7 @@ namespace MarkupHelper {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("net.tcp://localhost:8018/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("net.tcp://173.212.204.246:8018/")]
         public string ServiceEndpoint {
             get {
                 return ((string)(this["ServiceEndpoint"]));

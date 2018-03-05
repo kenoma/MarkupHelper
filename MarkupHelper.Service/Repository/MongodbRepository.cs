@@ -137,7 +137,10 @@ namespace MarkupHelper.Service.Repository
                 var tcollection = _database.GetCollection<ContentTag>(nameof(ContentTag));
 
                 if (!tcollection.AsQueryable().Any(z => z.Tag.Equals(tag)))
-                    return false;
+                {
+                    tcollection.InsertOne(new ContentTag { Tag = tag, Id = Guid.NewGuid() });
+                    //return false;
+                }
 
                 if (!gcollection.AsQueryable().Any(z => z.Id == group.Id))
                     return false;

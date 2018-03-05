@@ -31,7 +31,7 @@ namespace MarkupHelper.ViewModel
         private string _groupUrl;
         private int _userScore;
         public ObservableCollection<string> Tags { get; set; } = new ObservableCollection<string>();
-        public ObservableCollection<string> Emotions { get; set; } = new ObservableCollection<string>();
+        //public ObservableCollection<string> Emotions { get; set; } = new ObservableCollection<string>();
         private bool _isSubmitEnabled;
         private Content _currentGroup;
         private string _emo;
@@ -120,9 +120,9 @@ namespace MarkupHelper.ViewModel
                 foreach (var tag in arr)
                     Tags.Add(tag);
 
-                Emotions.Clear();
-                foreach (var tag in ContentTag.PredefinedEmotions)
-                    Emotions.Add(tag);
+                //Emotions.Clear();
+                //foreach (var tag in ContentTag.PredefinedEmotions)
+                //    Emotions.Add(tag);
                 
                 GroupUrl = "https://m.vk.com/";
                 IsReady = true;
