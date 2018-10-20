@@ -15,5 +15,8 @@ namespace MarkupHelper.Common.Domain.Model
 
         [DataMember]
         public string Token { get; set; }
+
+        [DataMember]
+        public int Level { get; set; }
     }
 }

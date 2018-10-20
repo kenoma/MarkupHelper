@@ -14,6 +14,6 @@ namespace MarkupHelper.Common.Domain.Model
         public Guid Id { get; set; }
 
         [DataMember]
-        public string VkContentId { get; set; }
+        public Uri PostAddress { get; set; }
     }
 }

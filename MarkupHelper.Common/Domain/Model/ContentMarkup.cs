@@ -20,9 +20,15 @@ namespace MarkupHelper.Common.Domain.Model
         public string ContentTag { get; set; }
 
         [DataMember]
+        public string Category { get; set; }
+
+        [DataMember]
         public Guid UserId { get; set; }
 
         [DataMember]
-        public Guid GroupId { get; set; }
+        public Guid ContentId { get; set; }
+
+        [DataMember]
+        public int Level { get; set; }
     }
 }

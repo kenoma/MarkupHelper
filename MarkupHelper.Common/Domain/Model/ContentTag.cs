@@ -10,21 +10,16 @@ namespace MarkupHelper.Common.Domain.Model
     [DataContract]
     public class ContentTag : IAggregateRoot
     {
-        public static string[] PredefinedEmotions = new string[] {
-            "Радость",
-            "Удивление",
-            "Печаль",
-            "Гнев",
-            "Отвращение",
-            "Презрение",
-            "Страх",
-            "Интерес"
-        };
-
         [DataMember]
         public Guid Id { get; set; }
 
         [DataMember]
         public string Tag { get; set; }
+
+        [DataMember]
+        public string Category { get; set; }
+
+        [DataMember]
+        public int Level { get; set; }
     }
 }

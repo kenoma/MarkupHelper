@@ -17,15 +17,18 @@ namespace MarkupHelper.Common.Domain.Repository
         UserModel GetUser(string token);
 
         [OperationContract]
-        string[] GetTagsList(UserModel user);
+        ContentTag[] GetTagsList(UserModel user);
 
         [OperationContract]
         Content GetUnmarkedContent(UserModel user);
 
         [OperationContract]
-        bool SubmitContentTag(UserModel user, Content group, string tag);
+        bool SubmitContentTag(UserModel user, Content group, string category, string tag);
 
         [OperationContract]
         int CalculateUserScore(UserModel user);
+
+        [OperationContract]
+        double PercentageDone(UserModel user);
     }
 }

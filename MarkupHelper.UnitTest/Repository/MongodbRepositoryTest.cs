@@ -44,10 +44,10 @@ namespace MarkupHelper.UnitTest.Repository
             var userAnother = Guid.NewGuid();
             var groupRecords = new List<ContentMarkup>
             {
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="A", UserId = userAnother },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="B", UserId = userAnother },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userAnother },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userAnother }
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="A", UserId = userAnother },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="B", UserId = userAnother },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userAnother },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userAnother }
             };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).InsertMany(groupRecords);
@@ -65,10 +65,10 @@ namespace MarkupHelper.UnitTest.Repository
             var userAnother = Guid.NewGuid();
             var groupRecords = new List<ContentMarkup>
             {
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="B", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userTarget.Id }
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="B", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userTarget.Id }
             };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).InsertMany(groupRecords);
@@ -85,10 +85,10 @@ namespace MarkupHelper.UnitTest.Repository
             var userAnother = Guid.NewGuid();
             var groupRecords = new List<ContentMarkup>
             {
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="B", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userAnother },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userTarget.Id }
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="B", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userAnother },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userTarget.Id }
             };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).InsertMany(groupRecords);
@@ -105,10 +105,10 @@ namespace MarkupHelper.UnitTest.Repository
             var userAnother = Guid.NewGuid();
             var groupRecords = new List<ContentMarkup>
             {
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="B", UserId = userAnother },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="C", UserId = userAnother },
-                new ContentMarkup { GroupId = Guid.NewGuid(), ContentTag="D", UserId = userTarget.Id }
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="B", UserId = userAnother },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="C", UserId = userAnother },
+                new ContentMarkup { ContentId = Guid.NewGuid(), ContentTag="D", UserId = userTarget.Id }
             };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).InsertMany(groupRecords);
@@ -127,7 +127,7 @@ namespace MarkupHelper.UnitTest.Repository
             _database.GetCollection<ContentTag>(nameof(ContentTag)).InsertMany(tags);
             var repo = Create();
 
-            repo.GetTagsList(user).Should().Equal(tags, (x, y) => y.Tag == x);
+            repo.GetTagsList(user).Should().Equal(tags, (x, y) => y.Tag == x.Tag);
         }
 
         [Test]
@@ -136,16 +136,16 @@ namespace MarkupHelper.UnitTest.Repository
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
             var groupRecords = new List<Content>
             {
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() }
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri( Environment.TickCount.ToString()) },
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) },
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) },
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) }
             };
             var markRecords = new List<ContentMarkup>
             {
-                new ContentMarkup { GroupId = groupRecords[0].Id, ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = groupRecords[1].Id, ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = groupRecords[2].Id, ContentTag="A", UserId = userTarget.Id }
+                new ContentMarkup { ContentId = groupRecords[0].Id, ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = groupRecords[1].Id, ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = groupRecords[2].Id, ContentTag="A", UserId = userTarget.Id }
 
             };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
@@ -163,17 +163,17 @@ namespace MarkupHelper.UnitTest.Repository
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
             var groupRecords = new List<Content>
             {
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() },
-                new Content{ Id=Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() }
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) },
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) },
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) },
+                new Content{ Id=Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) }
             };
             var markRecords = new List<ContentMarkup>
             {
-                new ContentMarkup { GroupId = groupRecords[0].Id, ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = groupRecords[1].Id, ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = groupRecords[2].Id, ContentTag="A", UserId = userTarget.Id },
-                new ContentMarkup { GroupId = groupRecords[3].Id, ContentTag="A", UserId = userTarget.Id }
+                new ContentMarkup { ContentId = groupRecords[0].Id, ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = groupRecords[1].Id, ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = groupRecords[2].Id, ContentTag="A", UserId = userTarget.Id },
+                new ContentMarkup { ContentId = groupRecords[3].Id, ContentTag="A", UserId = userTarget.Id }
             };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).InsertMany(markRecords);
@@ -188,32 +188,34 @@ namespace MarkupHelper.UnitTest.Repository
         public void SubmitGroupTag_Accept()
         {
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
-            var group = new Content { Id = Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() };
+            var group = new Content { Id = Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) };
             var mark = Path.GetRandomFileName();
+            var cat = Path.GetRandomFileName();
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             _database.GetCollection<Content>(nameof(Content)).InsertMany(new[] { group });
             _database.GetCollection<ContentTag>(nameof(ContentTag)).InsertOne(new ContentTag { Id = Guid.NewGuid(), Tag = mark });
             var repo = Create();
 
-            repo.SubmitContentTag(userTarget,group, mark).Should().BeTrue();
+            repo.SubmitContentTag(userTarget,group,cat, mark).Should().BeTrue();
             _log.DidNotReceive().Error(Arg.Any<Exception>(), Arg.Any<string>());
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).AsQueryable()
-                .Any(z => z.GroupId == group.Id && z.ContentTag == mark && z.UserId == userTarget.Id).Should().BeTrue();
+                .Any(z => z.ContentId == group.Id && z.ContentTag == mark && z.Category == cat && z.UserId == userTarget.Id).Should().BeTrue();
         }
 
         [Test]
         public void SubmitGroupTag_NoGroup_false()
         {
             var userTarget = new UserModel { Id = Guid.NewGuid(), Token = Path.GetRandomFileName() };
-            var group = new Content { Id = Guid.NewGuid(), VkContentId = Environment.TickCount.ToString() };
+            var group = new Content { Id = Guid.NewGuid(), PostAddress = new Uri(Environment.TickCount.ToString()) };
             var mark = Path.GetRandomFileName();
+            var cat = Path.GetRandomFileName();
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(userTarget);
             var repo = Create();
 
-            repo.SubmitContentTag(userTarget, group, mark).Should().BeFalse();
+            repo.SubmitContentTag(userTarget, group, cat, mark).Should().BeFalse();
             _log.DidNotReceive().Error(Arg.Any<Exception>(), Arg.Any<string>());
             _database.GetCollection<ContentMarkup>(nameof(ContentMarkup)).AsQueryable()
-                .Any(z => z.GroupId == group.Id && z.ContentTag == mark && z.UserId == userTarget.Id).Should().BeFalse();
+                .Any(z => z.ContentId == group.Id && z.ContentTag == mark && z.Category == cat && z.UserId == userTarget.Id).Should().BeFalse();
         }
 
         private MongodbRepository Create()

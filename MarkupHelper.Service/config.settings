@@ -9,10 +9,10 @@
       <Value Profile="(Default)">http://localhost:5341</Value>
     </Setting>
     <Setting Name="MongodbConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mongodb://localhost:27017/VkontakteMarkup</Value>
+      <Value Profile="(Default)">mongodb://localhost:27017/PostMarkup</Value>
     </Setting>
     <Setting Name="TargetDatabase" Type="System.String" Scope="User">
-      <Value Profile="(Default)">VkontakteMarkup</Value>
+      <Value Profile="(Default)">PostMarkup</Value>
     </Setting>
     <Setting Name="TagLimitPerUser" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>

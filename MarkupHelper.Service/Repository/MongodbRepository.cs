@@ -1,21 +1,19 @@
-﻿using MarkupHelper.Common.Domain.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MarkupHelper.Common.Domain.Model;
+using System.Runtime.CompilerServices;
 using System.ServiceModel;
-using Serilog;
+using System.ServiceModel.Channels;
+using MarkupHelper.Common.Domain.Model;
+using MarkupHelper.Common.Domain.Repository;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System.ServiceModel.Channels;
-using System.Runtime.CompilerServices;
+using Serilog;
 
 namespace MarkupHelper.Service.Repository
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, IncludeExceptionDetailInFaults = false)]
-    class MongodbRepository : IMarkupRepository
+    internal class MongodbRepository : IMarkupRepository
     {
         private readonly ILogger _log;
         private readonly IMongoDatabase _database;
@@ -31,7 +29,9 @@ namespace MarkupHelper.Service.Repository
             LogOperation(user);
 
             if (GetUser(user.Token).Id != user.Id)
+            {
                 throw new UnauthorizedAccessException();
+            }
 
             try
             {
@@ -39,11 +39,11 @@ namespace MarkupHelper.Service.Repository
 
                 var usertags = from mg in rcollection.AsQueryable()
                                where mg.UserId == user.Id
-                               select new { T = mg.ContentTag, G = mg.GroupId };
+                               select new { T = mg.ContentTag, G = mg.ContentId };
 
                 var nonusertags = from mg in rcollection.AsQueryable()
                                   where mg.UserId != user.Id
-                                  select new { T = mg.ContentTag, G = mg.GroupId };
+                                  select new { T = mg.ContentTag, G = mg.ContentId };
 
                 var union = usertags.ToArray().Intersect(nonusertags.ToArray());
 
@@ -56,26 +56,29 @@ namespace MarkupHelper.Service.Repository
             }
         }
 
-        public string[] GetTagsList(UserModel user)
+        public ContentTag[] GetTagsList(UserModel user)
         {
             LogOperation(user);
 
             if (GetUser(user.Token).Id != user.Id)
+            {
                 throw new UnauthorizedAccessException();
+            }
 
             try
             {
                 var rcollection = _database.GetCollection<ContentTag>(nameof(ContentTag));
 
                 var allTags = from a in rcollection.AsQueryable()
-                              select a.Tag;
+                              where a.Level == user.Level
+                              select a;
 
                 return allTags.ToArray();
             }
             catch (Exception ex)
             {
                 _log.Error(ex, ex.Message);
-                return new string[0];
+                return new ContentTag[0];
             }
         }
 
@@ -84,28 +87,30 @@ namespace MarkupHelper.Service.Repository
             LogOperation(user);
 
             if (GetUser(user.Token).Id != user.Id)
+            {
                 throw new UnauthorizedAccessException();
+            }
 
             try
             {
-
+                var rnd = new Random(Environment.TickCount);
                 var rcollection = _database.GetCollection<ContentMarkup>(nameof(ContentMarkup));
                 var gcollection = _database.GetCollection<Content>(nameof(Content));
 
                 var qrbl = rcollection.AsQueryable();
                 var forbiddenGroups = new HashSet<Guid>(from mg in qrbl
-                                                        group mg by mg.GroupId into g
+                                                        group mg by mg.ContentId into g
                                                         where g.Count() > config.Default.GroupMarkupsLimit
                                                         select g.Key);
 
                 var userGroups = (from mg in qrbl
                                   where mg.UserId == user.Id
-                                  select mg.GroupId).Distinct().ToArray();
+                                  select mg.ContentId).Distinct().ToArray();
 
                 var allGroups = (from a in gcollection.AsQueryable()
                                  select a).ToArray();
 
-                return allGroups.Where(z => !forbiddenGroups.Contains(z.Id)).FirstOrDefault(z => !userGroups.Contains(z.Id));
+                return allGroups.OrderBy(z => rnd.NextDouble()).Where(z => !forbiddenGroups.Contains(z.Id)).FirstOrDefault(z => !userGroups.Contains(z.Id));
             }
             catch (Exception ex)
             {
@@ -123,12 +128,30 @@ namespace MarkupHelper.Service.Repository
             return user;
         }
 
-        public bool SubmitContentTag(UserModel user, Content group, string tag)
+        public double PercentageDone(UserModel user)
         {
             LogOperation(user);
 
             if (GetUser(user.Token).Id != user.Id)
+            {
                 throw new UnauthorizedAccessException();
+            }
+
+            var rcollection = _database.GetCollection<ContentMarkup>(nameof(ContentMarkup));
+            var gcollection = _database.GetCollection<Content>(nameof(Content));
+
+            double markedByUser = rcollection.AsQueryable().Where(z => z.UserId == user.Id).Select(z => z.ContentId).Distinct().Count();
+            return Math.Round(100.0 * markedByUser / gcollection.Count(_ => true));
+        }
+
+        public bool SubmitContentTag(UserModel user, Content group, string category, string tag)
+        {
+            LogOperation(user);
+
+            if (GetUser(user.Token).Id != user.Id)
+            {
+                throw new UnauthorizedAccessException();
+            }
 
             try
             {
@@ -138,17 +161,29 @@ namespace MarkupHelper.Service.Repository
 
                 if (!tcollection.AsQueryable().Any(z => z.Tag.Equals(tag)))
                 {
-                    tcollection.InsertOne(new ContentTag { Tag = tag, Id = Guid.NewGuid() });
+                    tcollection.InsertOne(new ContentTag { Category = category, Tag = tag, Id = Guid.NewGuid() });
                     //return false;
                 }
 
                 if (!gcollection.AsQueryable().Any(z => z.Id == group.Id))
+                {
                     return false;
+                }
 
-                if (rcollection.AsQueryable().Count(mg => mg.UserId == user.Id && mg.GroupId == group.Id) > config.Default.TagLimitPerUser)
+                if (rcollection.AsQueryable().Count(mg => mg.UserId == user.Id && mg.ContentId == group.Id) > config.Default.TagLimitPerUser)
+                {
                     return false;
+                }
 
-                rcollection.InsertOne(new ContentMarkup { Id = Guid.NewGuid(), GroupId = group.Id, UserId = user.Id, ContentTag = tag, Timestamp = DateTime.UtcNow });
+                rcollection.InsertOne(new ContentMarkup {
+                    Id = Guid.NewGuid(),
+                    ContentId = group.Id,
+                    UserId = user.Id,
+                    ContentTag = tag,
+                    Category = category,
+                    Level = user.Level,
+                    Timestamp = DateTime.UtcNow
+                });
             }
             catch (Exception ex)
             {
@@ -164,7 +199,10 @@ namespace MarkupHelper.Service.Repository
             {
                 var context = OperationContext.Current;
                 if (context == null)
+                {
                     return;
+                }
+
                 var prop = context.IncomingMessageProperties;
                 var endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
                 _log.Verbose("[{Token}] User validation {Method} from {@EndpointData}", token, caller, endpoint);
@@ -181,7 +219,10 @@ namespace MarkupHelper.Service.Repository
             {
                 var context = OperationContext.Current;
                 if (context == null)
+                {
                     return;
+                }
+
                 var prop = context.IncomingMessageProperties;
                 var endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
                 _log.Verbose("[{@User}] Request {Method} from {@EndpointData}", user, caller, endpoint);

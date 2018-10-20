@@ -60,7 +60,7 @@ namespace MarkupHelper.Common.Service
             }
         }
 
-        public string[] GetTagsList(UserModel user)
+        public ContentTag[] GetTagsList(UserModel user)
         {
             try
             {
@@ -102,11 +102,25 @@ namespace MarkupHelper.Common.Service
             }
         }
 
-        public bool SubmitContentTag(UserModel user, Content group, string tag)
+        public bool SubmitContentTag(UserModel user, Content group, string category, string tag)
         {
             try
             {
-                return MarkupRepository.SubmitContentTag(user, group, tag);
+                return MarkupRepository.SubmitContentTag(user, group, category, tag);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Failed to call service");
+                _markupRepository = null;
+                throw;
+            }
+        }
+
+        public double PercentageDone(UserModel user)
+        {
+            try
+            {
+                return MarkupRepository.PercentageDone(user);
             }
             catch (Exception ex)
             {

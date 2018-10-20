@@ -50,7 +50,7 @@ namespace MarkupHelper.Service
                     case "lcat":
                         Console.Write("Enter categories filename:");
                         var fname = Console.ReadLine();
-                        manual.LoadCategories(fname);
+                        manual.LoadTags(fname);
                         break;
                     case "lgps":
                         Console.Write("Enter groups filename:");
@@ -60,7 +60,9 @@ namespace MarkupHelper.Service
                         manual.LoadGroups(fname, int.TryParse(count, out int take) ? take : 0);
                         break;
                     case "cuser":
-                        var token = manual.CreateNewUser();
+                        Console.Write("Enter user level:");
+                        var level = Convert.ToInt32( Console.ReadLine());
+                        var token = manual.CreateNewUser(level);
                         Console.WriteLine($"New user token is {token}");
                         break;
                 }

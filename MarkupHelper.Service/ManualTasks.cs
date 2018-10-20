@@ -1,7 +1,10 @@
-﻿using MarkupHelper.Common.Domain.Model;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using MarkupHelper.Common.Domain.Model;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,7 +21,14 @@ namespace MarkupHelper.Service
             _database = database;
         }
 
-        internal void LoadCategories(string filename)
+        class ContentTagCsv
+        {
+            public string Category { get; set; }
+            public string Tag { get; set; }
+            public int Level { get; set; }
+        }
+
+        internal void LoadTags(string filename)
         {
             if (!File.Exists(filename))
             {
@@ -26,25 +36,32 @@ namespace MarkupHelper.Service
                 return;
             }
 
-            foreach (var line in File.ReadAllLines(filename).Union(ContentTag.PredefinedEmotions))
+            using (var file = File.OpenText(filename))
+            using (var csv = new CsvReader(file, new Configuration { Delimiter = ",", CultureInfo = CultureInfo.InvariantCulture }))
             {
-                if (!_database.GetCollection<ContentTag>(nameof(ContentTag)).AsQueryable().Any(z => z.Tag == line))
+                foreach (var rec in csv.GetRecords<ContentTagCsv>())
                 {
-                    var tmp = new ContentTag { Id = Guid.NewGuid(), Tag = line };
-                    _database.GetCollection<ContentTag>(nameof(ContentTag)).InsertOne(tmp);
-                    Console.WriteLine($"Inserted tag {tmp.Id}:{tmp.Tag}");
-                }
-                else
-                {
-                    Console.WriteLine($"Tag {{{line}}} already added ");
+                    if (!_database.GetCollection<ContentTag>(nameof(ContentTag)).AsQueryable().Any(z =>
+                    z.Tag == rec.Tag &&
+                    z.Category == rec.Category &&
+                    z.Level == rec.Level))
+                    {
+                        var tmp = new ContentTag {
+                            Id = Guid.NewGuid(),
+                            Tag = rec.Tag,
+                            Category = rec.Category,
+                            Level = rec.Level
+                        };
+                        _database.GetCollection<ContentTag>(nameof(ContentTag)).InsertOne(tmp);
+                        Console.WriteLine($"Inserted tag {tmp.Id}:{tmp.Tag}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Tag {{{rec}}} already added ");
+                    }
                 }
             }
             Console.WriteLine("Done");
-            //
-            //
-            //
-            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "41b" });
-            //_database.GetCollection<GroupTag>(nameof(GroupTag)).InsertOne(new GroupTag { Id = Guid.NewGuid(), Tag = "51c" });
         }
 
         internal void LoadGroups(string fname, int take)
@@ -55,16 +72,16 @@ namespace MarkupHelper.Service
                 return;
             }
 
-            foreach (var line in File.ReadAllLines(fname))
+            foreach (var line in File.ReadAllLines(fname).Select(z => new Uri(z)))
                 if (take > 0)
                 {
                     var collection = _database.GetCollection<Content>(nameof(Content));
-                    if (!collection.AsQueryable().Any(z => z.VkContentId == line))
+                    if (!collection.AsQueryable().Any(z => z.PostAddress == line))
                     {
-                        var tmp = new Content { Id = Guid.NewGuid(), VkContentId = line };
+                        var tmp = new Content { Id = Guid.NewGuid(), PostAddress = line };
                         collection.InsertOne(tmp);
                         take--;
-                        Console.WriteLine($"Inserted group {tmp.Id}:{tmp.VkContentId}. Remains {take}");
+                        Console.WriteLine($"Inserted group {tmp.Id}:{tmp.PostAddress}. Remains {take}");
                     }
                     else
                     {
@@ -74,9 +91,13 @@ namespace MarkupHelper.Service
             Console.WriteLine("Done");
         }
 
-        internal string CreateNewUser()
+        internal string CreateNewUser(int level)
         {
-            UserModel user = new UserModel { Id = Guid.NewGuid(), Token = Guid.NewGuid().ToString() };
+            var user = new UserModel {
+                Id = Guid.NewGuid(),
+                Level = level,
+                Token = Guid.NewGuid().ToString()
+            };
             _database.GetCollection<UserModel>(nameof(UserModel)).InsertOne(user);
             return user.Token;
         }
